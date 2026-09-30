@@ -1,0 +1,56 @@
+# Supply a compatible chat-model checkpoint; weights are not distributed.
+run:
+  seed: 42
+models:
+  summarizer: models/summarizer
+  summarizer_backend: vllm
+  trust_remote_code: true
+  summarizer_enable_thinking: true
+  summarizer_max_input_tokens: 16384
+  summarizer_max_new_tokens: 4096
+  summarizer_thinking_budget_tokens: 3072
+  summarizer_final_answer_reserve_tokens: 1024
+  summarizer_contract_max_attempts: 3
+  summarizer_batch_size: 16
+  summarizer_temperature: 0.0
+  summarizer_top_p: 1.0
+  fail_on_prompt_truncation: true
+  summarizer_vllm_dtype: bfloat16
+  summarizer_vllm_tensor_parallel_size: 1
+  summarizer_vllm_language_model_only: true
+  summarizer_vllm_disable_custom_all_reduce: true
+  summarizer_vllm_max_model_len: 20480
+  summarizer_vllm_gpu_memory_utilization: 0.92
+  summarizer_vllm_attention_backend: FLASH_ATTN
+  summarizer_vllm_flash_attn_version: 2
+  summarizer_vllm_max_num_seqs: 16
+  summarizer_vllm_max_num_batched_tokens: 16384
+  summarizer_vllm_enable_chunked_prefill: true
+  summarizer_vllm_enable_prefix_caching: true
+  summarizer_vllm_enforce_eager: false
+logging:
+  quiet: true
+  progress_every_batches: 5
+domains:
+  alfworld:
+    models:
+      summarizer_max_input_tokens: 8192
+      summarizer_max_new_tokens: 8192
+      summarizer_thinking_budget_tokens: 6144
+      summarizer_final_answer_reserve_tokens: 2048
+      summarizer_vllm_max_model_len: 16384
+      summarizer_max_trajectory_steps: 50
+  qa:
+    models:
+      summarizer_max_trajectory_steps: 4
+      summarizer_contract_max_attempts: 5
+  webshop:
+    models:
+      summarizer_max_trajectory_steps: 30
+    summary:
+      max_prompt_tokens: 15360
+      max_goal_chars: 2048
+      max_observation_chars: 640
+      max_action_chars: 192
+      max_admissible_actions: 4
+      max_admissible_action_chars: 96

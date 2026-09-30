@@ -1,0 +1,160 @@
+dataset: alfworld
+data:
+  skills: data/skills/alfworld/
+  expected_count: 3553
+seed: 42
+models:
+  backbone: models/Qwen3-8B
+  summarizer: models/Qwen3.6-27B
+  skill_codec_attention_implementation: flash_attention_2
+  skill_codec_max_length: 2048
+  skill_decode_max_new_tokens: 1024
+  skill_decode_batch_size: 16
+  skill_encode_batch_size: 32
+codec:
+  encoder_model: models/Qwen3-Embedding-4B
+  query_encoder_model: models/Qwen3-Embedding-4B
+  backbone_dtype: auto
+  decoder_model: models/Qwen3-4B-Instruct-2507
+  float32_matmul_precision: highest
+  fused_optimizer: false
+  checkpoint_selection_mode: internal_validation_best_v1
+  forced_train_oversample_factor: 1
+  validation_ratio: 0.1
+  split_seed: 42
+  training_seed: 42
+  early_stopping_patience: 8
+  min_epochs: 24
+  epochs: 40
+  loss_mode: reconstruction
+  gradient_accumulation: 1
+  train_batch_tail_policy: repeat_epoch_prefix_to_full_batch_v1
+  max_length: 2048
+  num_prefix_tokens: 16
+  latent_noise_angle_std: 0.16
+  latent_noise_max_angle: 0.35
+  latent_noise_prob: 0.75
+  latent_noise_ramp_epochs: 8
+  encoder_lora_rank: 16
+  encoder_lora_alpha: 32
+  encoder_lora_dropout: 0.05
+  encoder_lora_last_n_layers: 8
+  decoder_lora_rank: 16
+  decoder_lora_alpha: 32
+  decoder_lora_dropout: 0.05
+  train_encoder: true
+  encoder_lr: 2.0e-06
+  decoder_lr: 1.0e-05
+  projector_lr: 0.0001
+  warmup_ratio: 0.05
+  log_every: 20
+  num_workers: 4
+  encoder_skill_prompt: 'Represent this compact ALFWorld skill as a normalized strategy
+    vector.
+
+    Skill JSON:
+
+    {skill}
+
+    '
+  encoder_query_prompt: 'Represent the following ALFWorld task condition as one query
+    vector for selecting or transforming a skill. Focus on task family, target object,
+    target receptacle, required state changes, and inspection/light constraints.
+
+    Task type: {task_type}
+
+    Task goal: {goal}
+
+    '
+  decoder_prompt: 'Decode the latent into exactly one compact ALFWorld skill JSON
+    object.
+
+    Task type: {task_type}
+
+    Task goal: {goal}
+
+    Use task context for required entities and state changes, and use the latent prefix
+    for the learned strategy.
+
+    Output JSON only with exactly three non-empty string fields: when_to_use, high_level_guidance,
+    and low_level_guidance.
+
+    Do not emit task metadata, outcome labels, arrays, markdown, or extra keys.
+
+    Keep the skill concise and end immediately after the JSON object.
+
+    JSON:
+
+    '
+  attention_implementation: flash_attention_2
+  global_batch_size: 48
+  deduplicate_skill_condition: true
+  weight_decay: 0.01
+  gradient_clip_norm: 1.0
+  recommended_world_size: 3
+flow:
+  source_skill_anchor: "{\n  \"when_to_use\": \"Use for any ALFWorld task when no\
+    \ more specific learned skill is available.\",\n  \"high_level_guidance\": \"\
+    Read the goal, identify the next unsatisfied requirement, and advance it with\
+    \ one admissible action.\",\n  \"low_level_guidance\": \"Ground choices in the\
+    \ current observation and inventory. If an action makes no progress, choose an\
+    \ untried admissible alternative.\"\n}\n"
+  condition_mode: task_type_goal_v1
+  hidden_dim: 768
+  depth: 12
+  num_heads: 12
+  time_dim: 256
+  context_dim: 768
+  architecture: tokenized_dit_combined_condition_v3
+  latent_token_size: 256
+  mlp_ratio: 4.0
+  output_parameterization: zero_init_tokenwise_conditioned_final_v1
+  condition_injection: t_h_combined_task_goal_adaln_zero_every_block_and_final_v1
+  training_steps: 30000
+  learning_rate: 5.0e-05
+  learning_rate_schedule: linear_warmup_cosine_decay_v1
+  learning_rate_warmup_steps: 1000
+  minimum_learning_rate: 5.0e-06
+  weight_decay: 0.0
+  ema_decay: 0.9995
+  gradient_clipping_mode: none
+  grad_clip: null
+  frozen_codec_quality_policy: audit_only_no_retrain
+  optimizer: adam
+  adam_beta1: 0.9
+  adam_beta2: 0.95
+  float32_matmul_precision: highest
+  fused_optimizer: false
+  prior_distribution: standard_normal
+  data_scaling: unit_l2_times_sqrt_latent_dim
+  path_type: linear
+  time_sampler: logit_normal
+  time_mean: -0.4
+  time_std: 1.0
+  off_diagonal_probability: 0.25
+  adaptive_weight_power: 0.5
+  adaptive_weight_eps: 0.01
+  cfg_mode: none
+  meanflow_objective: improved_boundary_velocity_vloss_v1
+  sampling_method: meanflow_interval_average_velocity
+  sampling_steps: 1
+  internal_validation_partition: task_type_stratified_semantic_condition_holdout_v1
+  internal_validation_ratio: 0.1
+  internal_validation_seed: 4242
+  internal_validation_batch_size: 32
+  minimum_k0_improvement: 0.0001
+  max_release_mean_angle: 0.05
+  max_release_p95_angle: 0.1
+  log_every: 20
+  global_batch_size: 192
+  recommended_world_size: 6
+checkpoint:
+  best_metric: macro_task_type_condition_symmetric_chamfer_terminal_geodesic_mse
+  best_mode: min
+  eval_every_steps: 10000
+  keep_flow_candidates: false
+evaluation:
+  one_shot: true
+  candidates: 1
+  final_decode_count: 1
+  rollout_attempts: 1

@@ -1,0 +1,53 @@
+domain: multihop
+nfe: 1
+run:
+  seed: 42
+models:
+  backbone: Qwen/Qwen3-8B
+  trust_remote_code: true
+  agent_backend: vllm
+  agent_enable_thinking: true
+  agent_requires_native_thinking: true
+  fail_on_prompt_truncation: true
+  agent_max_input_tokens: 8192
+  agent_vllm_dtype: bfloat16
+  agent_vllm_max_model_len: 16384
+  agent_vllm_gpu_memory_utilization: 0.76
+  agent_vllm_attention_backend: FLASH_ATTN
+  agent_vllm_flash_attn_version: 2
+  agent_vllm_request_batch_size: 32
+  agent_vllm_max_num_seqs: 32
+  agent_vllm_max_num_batched_tokens: 65536
+  agent_vllm_enable_chunked_prefill: true
+  agent_vllm_enable_prefix_caching: true
+  agent_vllm_enforce_eager: false
+sampling:
+  max_steps: 4
+  max_new_tokens: 8192
+  temperature: 0.6
+  top_p: 0.95
+  top_k: 20
+  min_p: 0.0
+env:
+  history_length: 4
+  history_observation_chars: 5000
+  retrieval_observation_chars: 6000
+rollout:
+  env_batch_size: 32
+  llm_batch_size: 32
+retrieval:
+  backend: faiss_gpu_sharded_fp16
+  index_precision: float16
+  expected_gpu_shards: 8
+  url: http://127.0.0.1:8042/retrieve
+  batch_url: http://127.0.0.1:8042/retrieve_batch
+  topk: 3
+  timeout_seconds: 600
+qa_summary:
+  protocol_id: imf_main_evaluation
+datasets:
+  nq:
+    max_steps: 4
+  hotpotqa:
+    max_steps: 4
+actor_policy: grounded_multihop_with_scope_generalization

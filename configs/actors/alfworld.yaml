@@ -1,0 +1,40 @@
+domain: alfworld
+nfe: 1
+run:
+  seed: 42
+models:
+  backbone: Qwen/Qwen3-8B
+  trust_remote_code: true
+  agent_backend: vllm
+  agent_attention_implementation: flash_attention_2
+  agent_vllm_dtype: bfloat16
+  agent_vllm_max_model_len: 24576
+  agent_vllm_gpu_memory_utilization: 0.9
+  agent_vllm_attention_backend: FLASH_ATTN
+  agent_vllm_flash_attn_version: 2
+  agent_environment_multiprocessing_start_method: forkserver
+  agent_vllm_request_batch_size: 40
+  agent_vllm_max_num_seqs: 40
+  agent_vllm_max_num_batched_tokens: 32768
+  agent_vllm_enable_chunked_prefill: true
+  agent_vllm_enable_prefix_caching: true
+  agent_vllm_enforce_eager: false
+  agent_enable_thinking: true
+  fail_on_prompt_truncation: true
+  agent_max_input_tokens: 16384
+sampling:
+  max_steps: 50
+  temperature: 0.6
+  top_p: 0.95
+  top_k: 20
+  min_p: 0.0
+  max_new_tokens: 8192
+env:
+  history_length: 8
+  history_observation_chars: 1200
+rollout:
+  env_batch_size: 40
+  llm_batch_size: 40
+environment:
+  config: configs/actors/alfworld_environment.yaml
+  train_eval: eval_in_distribution
