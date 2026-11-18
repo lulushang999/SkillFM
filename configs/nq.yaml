@@ -153,15 +153,10 @@ flow:
   global_batch_size: 2304
   batch_schedule:
   - start_step: 1
-    end_step: 10000
+    end_step: 30000
     global_batch_size: 144
     fused_optimizer: false
     restart_from_ema: false
-  - start_step: 10001
-    end_step: 30000
-    global_batch_size: 2304
-    fused_optimizer: true
-    restart_from_ema: true
   recommended_world_size: 4
 checkpoint:
   best_metric: macro_task_type_condition_symmetric_chamfer_terminal_geodesic_mse

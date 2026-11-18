@@ -30,7 +30,7 @@ sampling:
   min_p: 0.0
   max_new_tokens: 8192
 env:
-  history_length: 8
+  history_length: 5
   history_observation_chars: 1200
 rollout:
   env_batch_size: 40
