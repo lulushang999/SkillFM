@@ -53,10 +53,11 @@ python -m skillflow.generate --config configs/nq.yaml --codec runs/nq/codec --ch
 
 Recommended GPU counts are recorded separately for Codec and Flow in each config
 (ALFWorld: 3 and 6; other domains: 4). Global batches are preserved when changing
-world size, but batch tails and random streams may change. NQ retains its two-stage
-Flow batch schedule and the explicit EMA restart with a fresh Adam optimizer.
-Multihop selects among training-holdout candidates using decoded rule features and
-latent geometry; the other domains use the configured latent probe. All selection
+world size, but batch tails and random streams may change. NQ trains Flow with a
+single global batch of 144 for all 30,000 steps. ALFWorld, Multihop and NQ hold out
+complete task conditions from Flow training and select checkpoints on that holdout;
+WebShop uses a training-subset latent probe. Multihop scores candidates using decoded
+rule features and latent geometry; the other domains use latent geometry. All selection
 and final generation use NFE=1. Training consumes only the bundled training skills.
 
 ## Evaluate

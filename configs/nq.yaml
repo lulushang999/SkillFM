@@ -142,7 +142,7 @@ flow:
   meanflow_objective: improved_boundary_velocity_vloss_v1
   sampling_method: meanflow_interval_average_velocity
   sampling_steps: 1
-  internal_validation_partition: training_subset_probe_v1
+  internal_validation_partition: task_type_stratified_semantic_condition_holdout_v1
   internal_validation_ratio: 0.1
   internal_validation_seed: 4242
   internal_validation_batch_size: 32
@@ -150,7 +150,7 @@ flow:
   max_release_mean_angle: 0.05
   max_release_p95_angle: 0.1
   log_every: 20
-  global_batch_size: 2304
+  global_batch_size: 144
   batch_schedule:
   - start_step: 1
     end_step: 30000
